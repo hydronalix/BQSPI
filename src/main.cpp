@@ -36,9 +36,10 @@ void setup() {
 void loop() {
   
   AlarmBits = BQ769x2_ReadAlarmStatus();
-	if (AlarmBits & 0x80) {  // Check if FULLSCAN is complete. If set, new measurements are available
+	//if (AlarmBits & 0x80) {  // Check if FULLSCAN is complete. If set, new measurements are available
     BQ769x2_ReadAllVoltages();
-   // Pack_Current = BQ769x2_ReadCurrent();
+    BQ769x2_ReadTemperature(0x70);
+    Pack_Current = BQ769x2_ReadCurrent();
     //Temperature[0] = BQ769x2_ReadTemperature(TS1Temperature);
     //Temperature[1] = BQ769x2_ReadTemperature(TS3Temperature);
 		DirectCommands(AlarmStatus, 0x0080, W);  // Clear the FULLSCAN bit
@@ -48,8 +49,12 @@ void loop() {
       Serial.print(i); Serial.print(". ");
       Serial.println(CellVoltage[i]);
     }
+    for(auto r :Temperature){
+      Serial.println(r);
+    }
+    Serial.print("Current:");Serial.println(Pack_Current);
 
-	}
+	//}
 
   delay(1000);
 

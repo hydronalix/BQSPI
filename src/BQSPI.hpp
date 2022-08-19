@@ -325,7 +325,7 @@ void BQ769x2_Init() {
 	BQ769x2_SetRegister(HDQPinConfig, 0x00, 1);   // No thermistor installed on EVM HDQ pin, so set to 0x00
 
 	// 'VCell Mode' - Enable 16 cells - 0x9304 = 0x0000; Writing 0x0000 sets the default of 16 cells
-	BQ769x2_SetRegister(VCellMode, 0x00FF, 2); // did this
+	BQ769x2_SetRegister(VCellMode, 0x0FFF, 2); // did this; now 0FFF
 
 	// Enable protections in 'Enabled Protections A' 0x9261 = 0xBC
 	// Enables SCD (short-circuit), OCD1 (over-current in discharge), OCC (over-current in charge),
@@ -352,10 +352,10 @@ void BQ769x2_Init() {
 	// COV Threshold is this value multiplied by 50.6mV
 	BQ769x2_SetRegister(COVThreshold, 0x55, 1);
 
-	// Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
+	//Set up OCC (over-current in charge) Threshold - 0x9280 = 0x05 (10 mV = 10A across 1mOhm sense resistor) Units in 2mV
 	BQ769x2_SetRegister(OCCThreshold, 0x05, 1);
 
-	// Set up OCD1 Threshold - 0x9282 = 0x0A (20 mV = 20A across 1mOhm sense resistor) units of 2mV
+	//Set up OCD1 Threshold - 0x9282 = 0x0A (20 mV = 20A across 1mOhm sense resistor) units of 2mV
 	BQ769x2_SetRegister(OCD1Threshold, 0x0A, 1);
 
 	// Set up SCD Threshold - 0x9286 = 0x05 (100 mV = 100A across 1mOhm sense resistor)  0x05=100mV
@@ -381,4 +381,10 @@ uint16_t BQ769x2_ReadAlarmStatus() {
 	// Read this register to find out why the ALERT pin was asserted
 	DirectCommands(AlarmStatus, 0x00, R);
 	return (RX_data[1]*256 + RX_data[0]);
+}
+uint16_t BQ769x2_ReadCurrent() 
+// Reads PACK current 
+{
+	DirectCommands(CC2Current, 0x00, R);
+	return (RX_data[1]*256 + RX_data[0]);  // current is reported in mA
 }
